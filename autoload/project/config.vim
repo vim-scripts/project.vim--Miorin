@@ -1,3 +1,5 @@
+let s:projects = {}
+
 function! project#config#project(arg, ...) abort
   if a:arg[0] == "/" || a:arg[0] == "~"
     let project = resolve(fnamemodify(a:arg, ":p"))
@@ -13,8 +15,20 @@ function! project#config#project(arg, ...) abort
   if !isdirectory(project)
     return
   endif
-  let autocmd = "autocmd BufEnter ".event." lcd ".project." | let b:title = \"".title."\""
-  call add(g:projects, autocmd)
+  let s:projects[title] = { "type": "project", "event": event, "project": project, "title": title, "callbacks": [] }
+  call s:setup()
+endfunction
+
+function! project#config#callback(title, callback) abort
+  if type(a:callback) == type([])
+    let callbacks = a:callback
+  else
+    let callbacks = [a:callback]
+  endif
+  let project_or_filename = s:projects[a:title]
+  for callback in callbacks
+    call add(project_or_filename["callbacks"], callback)
+  endfor
   call s:setup()
 endfunction
 
@@ -26,8 +40,7 @@ function! project#config#title(filename, title) abort
   if !filereadable(filename)
     return
   else
-    let autocmd = "autocmd BufEnter ".filename." let b:title = \"".a:title."\""
-    call add(g:projects, autocmd)
+    let s:projects[a:title] = { "type": "filename", "event": filename, "title": a:title, "callbacks": [] }
     call s:setup()
   endif
 endfunction
@@ -40,10 +53,26 @@ function! project#config#project_path(arg, ...) abort
   endif
 endfunction
 
+function! s:callback(title) abort
+  let project = s:projects[a:title]
+  let type = project["type"]
+  let callbacks = project["callbacks"]
+  if len(callbacks) > 0
+    for callback in callbacks
+      execute "call ".callback."(\"".a:title."\")"
+    endfor
+  endif
+endfunction
+
 function! s:setup() abort
   augroup vim_project
     autocmd!
-    for autocmd in g:projects
+    for v in values(s:projects)
+      if v["type"] == "project"
+        let autocmd = "autocmd BufEnter ".v["event"]." lcd ".v["project"]." | let b:title = \"".v["title"]."\" | call s:callback(\"".v["title"]."\")"
+      else
+        let autocmd = "autocmd BufEnter ".v["event"]." let b:title = \"".v["title"]."\" | call s:callback(\"".v["title"]."\")"
+      endif
       execute autocmd
     endfor
     if has("gui_running")
