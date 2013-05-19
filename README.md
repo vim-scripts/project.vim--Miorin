@@ -1,3 +1,6 @@
+## News
+* [Windows support added](https://twitter.com/amiorin/status/336003331984076800)
+
 ## Introduction
 A Project is made of :
 * One directory (the ``root of the project``)
@@ -16,9 +19,11 @@ There are four commands :
 * ``Project``
 It's used inside the ``.vimrc``. The first parameter is the ``path`` to the
 project. The second parameter is optional and it is the ``title`` of the
-project.  If the ``path`` to the project is a relative path, it's combined
-with the ``starting path``.  The ``starting path`` is defined when you
-initialize the plugin :
+project and the default value of it is the last part of the name of the
+directory containing the project.  If the ``path`` to the project is a
+relative path, it's combined with the ``starting path``.  The ``starting
+path`` is defined when you initialize the plugin :
+
 ```vim
 set rtp+=~/.vim/bundle/vim-project/
 " custom starting path
@@ -26,6 +31,7 @@ call project#rc("~/Code")
 " default starting path (the home directory)
 call project#rc()
 ```
+
 * ``ProjectPath``
 It's used inside the ``cmdline mode``. The first parameter is the ``path``
 without quotation. The second parameter is optional and it is the ``title`` of
@@ -49,6 +55,8 @@ If you don't want ``Welcome`` to appear when you start vim:
 ```vim
 " before call project#rc()
 let g:project_enable_welcome = 0
+" if you want the NERDTree integration.
+let g:project_use_nerdtree = 1
 
 set rtp+=~/.vim/bundle/vim-project/
 call project#rc("~/Code")
@@ -64,7 +72,7 @@ If you use [Pathogen][2], you just execute following:
 
 ```sh
 cd ~/.vim/bundle
-git https://github.com/amiorin/vim-project.git
+git clone https://github.com/amiorin/vim-project.git
 ```
 
 If you don't use either plugin management system, copy the `plugin` directory to your `.vim` directory.
@@ -76,6 +84,7 @@ Windows: $HOME/vimfiles
 sample ``.vimrc``:
 
 ```vim
+let g:project_use_nerdtree = 1
 set rtp+=~/.vim/bundle/vim-project/
 call project#rc("~/Code")
 
@@ -121,12 +130,12 @@ From the ``cmdline mode``.
 ``ProjectPath`` uses the ``cwd`` and the arguments are not quoted.
 ```vim
 :ProjectPath .
-:ProjectPath /etc etcetera
+:ProjectPath /etc myconfig
 ```
 
 ## Self-Promotion
 Like this plugin?
-* Star the repository on [GitHub](https://github.com/amiorin/vim-fenced-code-blocks)
+* Star the repository on [GitHub](https://github.com/amiorin/vim-project)
 * Follow me on
   * [Twitter](http://twitter.com/amiorin)
   * [GitHub](https://github.com/amiorin)
@@ -135,3 +144,7 @@ Like this plugin?
 [0]: https://pbs.twimg.com/media/BIcCUupCMAEG8Lg.png:large
 [1]: https://github.com/gmarik/vundle.git
 [2]: https://github.com/tpope/vim-pathogen
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/amiorin/vim-project/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
